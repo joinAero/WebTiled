@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>WebTiled</title>
+	<script src="lib/jquery-1.8.0.min.js"></script>
+	<script src="lib/bootstrap.min.js"></script>
+
+
+	<script src="js/WT.js"></script>
+
+	<script src="js/core/Color.js"></script>
+	<script src="js/core/Rect.js"></script>
+	<script src="js/core/Tile.js"></script>
+	<script src="js/core/Piece.js"></script>
+	<script src="js/core/Map.js"></script>
+	<script src="js/core/Layer.js"></script>
+	<script src="js/core/TileLayer.js"></script>
+	<script src="js/core/RectLayer.js"></script>
+
+	<script src="js/mesh/Dashed.js"></script>
+	<script src="js/mesh/MeshTile.js"></script>
+	<script src="js/mesh/MeshMap.js"></script>
+
+	<script src="js/module/TileModule.js"></script>
+	<script src="js/module/MapModule.js"></script>
+	<script src="js/module/StoreModule.js"></script>
+	<script src="js/module/ToolbarModule.js"></script>
+
+	<script src="js/tool/ToolBase.js"></script>
+	<script src="js/tool/ToolRect.js"></script>
+	<script src="js/tool/ToolStamp.js"></script>
+	<script src="js/tool/ToolFill.js"></script>
+
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/scrollstyle.css">
+	<style>
+		#toolTab {
+			font-weight: bold;
+		}
+		.btn-toolbar {
+			margin: 0px 0px;
+		}
+		h4.style1 {
+			margin: 0px;
+			color: #999;
+		}
+		.btns-offset {
+			margin-left: 200px;
+		}
+		.btns-offset2 {
+			margin-left: 180px;
+		}
+		.btn-reset {
+			margin: 10px 0px;
+			margin-left: 210px;
+		}
+		#tileSelect {
+			margin: 10px 0px;
+		}
+		#tileSelect button[id="tileResult"]{
+			width: 138px;
+			text-align: left;
+		}
+
+		hr {
+			border-top: 1px solid #e0e0e0;
+			border-bottom: 1px solid white;
+		}
+		hr.divider {
+			margin: 5px 0;
+		}
+
+		#tileCanvasDiv {
+			width: 260px;
+			height: 260px;
+			overflow: auto;
+			border: 1px solid #c3c3c3;
+			position: absolute;
+			/*-webkit-user-select: none;*/
+		}
+		#mapCanvasDiv {
+			width: 620px;
+			height: 500px;
+			overflow: auto;
+			border: 1px solid #c3c3c3;
+			position: absolute;
+			/*-webkit-user-select: none;*/
+		}
+		#mapCanvasDiv canvas {
+			position: absolute;
+			left : 0px;
+			top : 0px;
+		}
+		#tileCanvasDiv canvas {
+			position: absolute;
+			left : 0px;
+			top : 0px;
+		}
+
+		input[type="file"] {
+			cursor: pointer;
+			direction: rtl;
+			height: 30px;
+			width: 60px;
+			opacity: 0;
+			filter: alpha(opacity=0);
+			position: absolute;
+		}
+
+		#toolGroup {
+			border: 1px solid #BBB;
+			z-index: 1039; /* <1040 */
+			position: absolute;
+			left : 0px;
+			top : 0px;
+			/*-webkit-user-select: none;*/
+		}
+		#toolGroup.on
+        {
+            box-shadow: 0 0 10px #111;
+        }
+        #toolGroup.off
+        {
+            box-shadow: 0 0 0 0;
+        }
+		#toolGroup button {
+			color: #08C;
+			cursor: pointer;
+			border-color: transparent;
+			-webkit-border-radius: 0;
+			-moz-border-radius: 0;
+			border-radius: 0;
+			background-color: #FFF;
+			display: inline-block;
+			width: 20px;
+			height: 20px;
+			background-repeat: no-repeat;
+		}
+
+		.unselect {
+			-webkit-user-select: none;
+			/*-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			-o-user-select: none;*/
+			user-select: none;
+		}
+	</style>
+</head>
+<body class="unselect">
+<!-- 单独给几个层加unselect似乎其他层有冲突，没效果 -->
+	<p></p>
+	<div class="container">
+		<div class="row">
+			<div class="span8">
+				<ul class="nav nav-tabs" id="toolTab">
+					<li class="active"><a href="#file" data-toggle="tab">文件</a></li>
+					<li><a href="#layer" data-toggle="tab">图层</a></li>
+					<li><a href="#tile" data-toggle="tab">图块</a></li>
+					<li><a href="#view" data-toggle="tab">视图</a></li>
+					<li><a href="#help" data-toggle="modal">帮助</a></li>
+				</ul>
+
+				<div class="tab-content">
+					<div class="tab-pane active" id="file">
+						<div class="btn-toolbar">
+							<div class="btn-group" style="overflow : hidden;">
+								<button class="btn" id="new">新建</button>
+								<a class="btn" href="#"><input type="file" id="open">导入</a>
+								<button class="btn" id="export">导出</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn" id="save">保存</button>
+								<button class="btn" id="saveAs">另存图片</button>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="layer">
+						<div class="btn-toolbar">
+							<div class="btn-group">
+								<button class="btn" id="add">添加</button>
+								<button class="btn" id="delete">删除</button>
+								<button class="btn" id="rename">重命名</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn" id="adjMap">调整</button>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="tile">
+						<div class="btn-toolbar">
+							<div class="btn-group">
+								<button class="btn" id="addTile">添加</button>
+								<button class="btn" id="delTile">删除</button>
+							</div>
+							<button class="btn" id="adjTile">调整</button>
+						</div>
+					</div>
+					<div class="tab-pane" id="view">
+						<button class="btn" id="mesh">隐藏网格</button>
+						<button class="btn" id="toolbar" disabled>显示工具栏</button>
+					</div>
+				</div>
+
+				<div class="modal hide fade" id="help" tabindex="-1">
+					<div class="modal-header">
+						<button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h3>帮助说明</h3>
+					</div>
+					<div class="modal-body">
+						<div class="alert">
+							<button type="button" class="close" data-dismiss="alert">×</button>
+							<strong>注意啦！</strong>只在Chrome 20+运行测试过...
+						</div>
+						<dl>
+							<dt>图块</dt>
+								<dd>地图元素的集合图片，用以构造图块层。</dd>
+							<dt>图层</dt>
+								<dd>分为图块层与框域层两种。前一种，用于构成地图；后一种，用于碰撞检测。</dd>
+							<dt>其他</dt>
+								<dd>点击图层名称，则选中为当前操作图层。</dd>
+								<dd>增加图块，亦可以拖一个或多个图片进图块域。</dd>
+								<dd>打开文件，亦可以直接拖进图层域（多个时，只读取一个）。</dd>
+							<dt>问题</dt>
+								<dd>图层建太大或过多，会有黑图层现象或直接崩溃T^T。</dd>
+								<dd><i>注：具体限制貌似与设备配置相关。</i></dd>
+						</dl>
+						<div class="alert alert-info">
+							本应用前端交互和展示使用了jQuery和Bootstrap，谨此致谢！
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button> 	
+					</div>
+				</div>
+				<hr>
+				<div id="mapCanvasDiv">
+					<canvas width="610px" height="490px" id="meshCanvas">
+						浏览器不支持Canvas:(
+					</canvas>
+				</div>
+			</div>
+			<div class="span4">
+				<div class="well" id="tileCtrl" style="height:350px">
+					<div class="row">
+						<div class="span1">
+							<h4 class="style1">图块</h4>
+						</div>
+						<div class="btns-offset btn-group">
+							<button class="btn-link"><i class="icon-plus" id="tilePlus"></i></button>
+							<button class="btn-link"><i class="icon-trash" id="tileTrash"></i></button>
+						</div>
+					</div>
+					<hr class="divider">
+					<div class="row">
+						<div class="span1">
+							<div class="btn-group" id="tileSelect">
+								<button class="btn" id="tileResult"></button>
+									<button class="btn dropdown-toggle" data-toggle="dropdown">
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" id="tileList">
+								</ul>
+							</div>
+						</div>
+						<div class="btn-reset">
+							<button class="btn" id="tileAdjust">调整</button>
+						</div>
+					</div>
+					<div id="tileCanvasDiv">
+						<canvas width="250px" height="250px" id="tileCanvas">
+							浏览器不支持Canvas:(
+						</canvas>
+						<canvas width="250px" height="250px" id="tileMeshCanvas">
+					</div>
+				</div>
+				<div class="well" id="layerCtrl">
+					<div class="row">
+						<div class="span1">
+							<h4 class="style1">图层</h4>
+						</div>
+						<div class="btns-offset2 btn-group">
+							<button class="btn-link"><i class="icon-arrow-left" id="layerRevoke"></i></button>
+							<button class="btn-link"><i class="icon-plus" id="layerPlus"></i></button>
+							<button class="btn-link"><i class="icon-trash" id="layerTrash"></i></button>
+						</div>
+					</div>
+					<hr class="divider">
+					<table class="table">
+						<tread><tr><td>显示</td><td>名称</td><td>类型</td><td>绘制次序</td></tr></tread>
+						<tbody id="layerContainer">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="toolGroup" class="btn-group off">
+	</div>
+	<div id="dialogGroup">
+		<!-- 询问对话框 -->
+		<div class="modal hide" id="dialogModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3><span id="dialogHeader"></span></h3>
+			</div>
+			<div class="modal-body">
+				<span id="dialogBody"></span>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-primary" id="dialogConfirm">确定</button>
+			</div>
+		</div>
+		<!-- 图块对话框 -->
+		<div class="modal hide" id="tileModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3><span id="tileHeader">新图块</span></h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+		            <legend>图块</legend>
+		            <div class="control-group">
+		              <label class="control-label">名称：</label>
+		              <div>
+		                <input type="text" id="tileName">
+		              </div>
+		            </div>
+		            <div class="control-group" id="imageCtrl">
+		              <label class="control-label">图像：</label>
+		              <div>
+		                <input type="text" id="tileImage">
+						<a class="btn" href="#"><input type="file" id="tileFile" accept="image/*">浏览...</a>
+		              </div>
+		            </div>
+		        </form>
+				<hr class="divider">
+				<form class="form-horizontal">
+		            <legend>块</legend>
+		            <div class="control-group">
+		              <label class="control-label">宽度：</label>
+		              <div class="input-append">
+		                <input type="number" id="tileWidth" placeholder="16" value="16"><span class="add-on">像素</span>
+		              </div>
+		              <label class="control-label">高度：</label>
+		              <div class="input-append">
+		                <input type="number" id="tileHeight" placeholder="16" value="16"><span class="add-on">像素</span>
+		              </div>
+		            </div>
+		            <div class="control-group">
+		              <label class="control-label">边距：</label>
+		              <div class="input-append">
+		                <input type="number" id="margin" placeholder="0" value="0"><span class="add-on">像素</span>
+		              </div>
+		              <label class="control-label">间距：</label>
+		              <div class="input-append">
+		                <input type="number" id="spacing" placeholder="0" value="0"><span class="add-on">像素</span>
+		              </div>
+		            </div>
+		        </form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-primary" id="tileConfirm">确定</button>
+			</div>
+		</div>
+		<!-- 文件对话框 -->
+		<div class="modal hide" id="fileModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3><span>新文件</span></h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+		            <legend>地图大小</legend>
+		            <div class="control-group">
+		              <label class="control-label">宽度：</label>
+		              <div class="input-append">
+		                <input type="number" id="fwidth" placeholder="50" value="50"><span class="add-on">块</span>
+		              </div>
+		              <label class="control-label">高度：</label>
+		              <div class="input-append">
+		                <input type="number" id="fheight" placeholder="50" value="50"><span class="add-on">块</span>
+		              </div>
+		            </div>
+		        </form>
+				<hr class="divider">
+				<form class="form-horizontal">
+		            <legend>块大小</legend>
+		            <div class="control-group">
+		              <label class="control-label">宽度：</label>
+		              <div class="input-append">
+		                <input type="number" id="ftileWidth" placeholder="16" value="16"><span class="add-on">像素</span>
+		              </div>
+		              <label class="control-label">高度：</label>
+		              <div class="input-append">
+		                <input type="number" id="ftileHeight" placeholder="16" value="16"><span class="add-on">像素</span>
+		              </div>
+		            </div>
+		        </form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-primary" id="fileConfirm">确定</button>
+			</div>
+		</div>
+		<!-- 图层对话框 -->
+		<div class="modal hide" id="layerModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3><span>新图层</span></h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+		            <legend>属性</legend>
+		            <div class="control-group">
+		              <label class="control-label">名称：</label>
+		              <div>
+		                <input type="text" id="lname">
+		              </div>
+		            </div>
+		            <div class="control-group" id="layerType">
+		              <label class="control-label">类型：</label>
+		              <div class="input-append">
+		              	<label class="radio inline">
+							<input type="radio" name="layerRadios" id="layerRadios1" value="tilelayer" checked>
+							图块层
+						</label>
+		              	<label class="radio inline" style="margin-left:40px;">
+							<input type="radio" name="layerRadios" id="layerRadios2" value="rectlayer">
+							框域层
+						</label>
+		              </div>
+		            </div>
+		        </form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-primary" id="layerConfirm">确定</button>
+			</div>
+		</div>
+		<!-- 导出对话框 -->
+		<div class="modal hide" id="exportModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3><span>导出文件</span></h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+		            <legend>文件</legend>
+		            <div class="control-group">
+		              <label class="control-label">名称：</label>
+		              <div>
+		                <input type="text" id="filename">
+		              </div>
+		            </div>
+		        </form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<a class="btn btn-primary" href="#" download="export.json" id="exportConfirm">确定</a>
+			</div>
+		</div>
+		<!-- 文件调整对话框 -->
+		<div class="modal hide" id="adjMapModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3><span>调整地图</span></h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+		            <legend>地图大小</legend>
+		            <div class="control-group">
+		              <label class="control-label">宽度：</label>
+		              <div class="input-append">
+		                <input type="number" id="newWidth"><span class="add-on">块</span>
+		              </div>
+		              <label class="control-label">高度：</label>
+		              <div class="input-append">
+		                <input type="number" id="newHeight"><span class="add-on">块</span>
+		              </div>
+		            </div>
+		        </form>
+				<hr class="divider">
+				<form class="form-horizontal">
+		            <legend>地图偏移</legend>
+		            <div class="control-group">
+		              <label class="control-label">右移：</label>
+		              <div class="input-append">
+		                <input type="number" id="rightOffset" value="0"><span class="add-on">块</span>
+		              </div>
+		              <label class="control-label">下移：</label>
+		              <div class="input-append">
+		                <input type="number" id="downOffset" value="0"><span class="add-on">块</span>
+		              </div>
+		            </div>
+		        </form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-primary" id="adjMapConfirm">确定</button>
+			</div>
+		</div>
+	<div>
+</body>
+</html>
