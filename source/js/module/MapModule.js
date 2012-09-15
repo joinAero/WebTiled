@@ -204,7 +204,7 @@ WT.MapModule = function(currentPiece, toggleLayer) {
 		}
 	}
 
-	// 某些工具项的添加、删除、切换时的操作
+	// 某些工具项的添加、删除、切换等时的操作
 	function updateToolSettings() {
 		if (mLayer.type === WT.TILE_LAYER) {
 			switch(tool.id) {
@@ -420,6 +420,7 @@ WT.MapModule = function(currentPiece, toggleLayer) {
 			layer._canvas.style.left = meshCanvas.style.left;
 			layer._canvas.style.top = meshCanvas.style.top;
 		}
+		updateToolSettings();
 	}
 
 	return {
