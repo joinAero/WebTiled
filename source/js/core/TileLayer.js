@@ -1,4 +1,8 @@
-
+/**
+ * 图块层。
+ * 这里的cover&restore是刚开始写的，只支持一个小图块，用于印刻==。
+ * 之后的填充、连接等工具项都独自有其方法。
+ */
 WT.TileLayer = function() {
 	WT.Layer.apply(this, arguments);
 

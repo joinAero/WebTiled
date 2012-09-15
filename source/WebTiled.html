@@ -31,6 +31,7 @@
 	<script src="js/tool/ToolRect.js"></script>
 	<script src="js/tool/ToolStamp.js"></script>
 	<script src="js/tool/ToolFill.js"></script>
+	<script src="js/tool/ToolLink.js"></script>
 
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/scrollstyle.css">
@@ -214,20 +215,22 @@
 							<strong>注意啦！</strong>只在Chrome 20+运行测试过...
 						</div>
 						<dl>
-							<dt>图块</dt>
-								<dd>地图元素的集合图片，用以构造图块层。</dd>
-							<dt>图层</dt>
-								<dd>分为图块层与框域层两种。前一种，用于构成地图；后一种，用于碰撞检测。</dd>
-							<dt>其他</dt>
-								<dd>点击图层名称，则选中为当前操作图层。</dd>
-								<dd>增加图块，亦可以拖一个或多个图片进图块域。</dd>
-								<dd>打开文件，亦可以直接拖进图层域（多个时，只读取一个）。</dd>
-							<dt>问题</dt>
-								<dd>图层建太大或过多，会有黑图层现象或直接崩溃T^T。</dd>
-								<dd><i>注：具体限制貌似与设备配置相关。</i></dd>
+							<dt>基本功能</dt>
+								<dd>1. 导入导出当前工程，及保存成json地图或图片。</dd>
+								<dd>2. 图层分图块层、框域层两种。前者绘图块、后者绘区域。</dd>
+								<dd>3. 工具栏主要提供图块层印刻、填充、连接等多种绘制方式。</dd>
+								<dd>4. 添加图块，可以将多个图片一起拖进图块显示域来添加。</dd>
+								<dd>5. 导入工程文件也可拖进地图显示域，不过只会读取其中一个。</dd>
+								<dd>6. 应用在本地即可跑，即file://路径。也没放服务器上试呢。</dd>
+							<dt>注意项</dt>
+								<dd>1. 应用只在Chrome20+上跑过...</dd>
+								<dd>2. 地图与选取的图块宽高不一致时，未多考虑。</dd>
+								<dd>3. 图层建太大或过多，会有黑图层或直接崩溃T^T。</dd>
+								<dd><i>注：具体限制好像与PC性能相关。</i></dd>
 						</dl>
 						<div class="alert alert-info">
-							本应用前端交互和展示使用了jQuery和Bootstrap，谨此致谢！
+							本应用的交互及展示使用了<a href="http://jquery.com/" target="_blank">jQuery</a>和<a href="http://twitter.github.com/bootstrap/" target="_blank">Bootstrap</a>。
+							<br/>另外，工具栏图标来自<a href="http://www.defaulticon.com/" target="_blank">defaulticon.com</a>。谨此致谢！
 						</div>
 					</div>
 					<div class="modal-footer">

@@ -294,6 +294,9 @@ WT.MapModule = function(currentPiece, toggleLayer) {
 				case 'fill' :
 					tool = new WT.ToolFill('fill', map, meshCanvas, currentLayer, currentPiece);
 					break;
+				case 'link' :
+					tool = new WT.ToolLink('link', map, meshCanvas, currentLayer, currentPiece);
+					break;
 			}
 			tool.register();
 		}
