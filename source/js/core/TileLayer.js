@@ -57,8 +57,8 @@ WT.TileLayer.prototype.revoke = function() {
 			// 依次遍历剩余的，判断有相交域时恢复。可能会有多块相交，所以需依次遍历。
 			// 该方法，相比全部重绘，在大量重叠时，效率应该会低。
 			(function(left, top) {
-				var o, j = -1;
-				while (o = this.operations[++j]) {
+				var o, j = this.operations.length;
+				while (o = this.operations[--j]) {
 					var cover = o[3];
 					var len = cover.length;
 					var tile, data;

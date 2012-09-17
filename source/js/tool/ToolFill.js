@@ -55,7 +55,7 @@ WT.ToolFill.prototype = (function() {
 	function pushTile(tileId, tileLeft, tileTop) {
 		var tile, i = -1;
 		while(tile = tileMap[++i]) {
-			if (tile.tileId == tileId && tile.tileLeft == tileLeft && tile.tileTop == tileTop) {
+			if (tile[0] == tileId && tile[1] == tileLeft && tile[2] == tileTop) {
 				return i;
 			}
 		}
@@ -117,6 +117,9 @@ WT.ToolFill.prototype = (function() {
 		 * 并在原mergeResultMap基础上将现在的填充层加进去。
 		 */
 		var piece = currentPiece();
+		if (!piece) {
+			return;
+		}
 		var tileKey = pushTile(piece.tileId, piece.left, piece.top);
 		
 		var locations = [];
