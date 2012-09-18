@@ -46,9 +46,51 @@ WT.StoreModule = function() {
 		reader.readAsText(file);
 	}
 
+	function exportJson() {
+
+	}
+
+	function exportImage(imgName) {
+		var file = WT.file;
+
+		// 新创建一个canvas
+		var canvas = document.createElement('canvas');
+		canvas.width = file.width * file.tilewidth;
+		canvas.height = file.height * file.tileheight;
+		var ctx = canvas.getContext('2d');
+		// 将当前可见的图块层整在一起
+		var layer , i = -1;
+		while (layer = file.layers[++i]) {
+			if (layer.type == WT.TILE_LAYER && layer.visible) {
+				var op, j = -1;
+				while (op = layer.operations[++j]) {
+					var tile = WT.getTile(op[0]);
+					var data = tile.clipImageData(op[1], op[2]);
+					var cover = op[3];
+					var len = cover.length;
+					for (var k = 0; k < len; k += 2) {
+						ctx.putImageData(data, cover[k], cover[k + 1], 0.0, 0.0, tile.tilewidth, tile.tileheight);
+					}
+				}
+			}
+		}
+
+		var data = canvas.toDataURL('image/png');
+		// var blob = new Blob([data], {type : "image/png"});
+		// window.URL = window.webkitURL || window.URL;
+		$('#saveAsConfirm').attr({
+			download : imgName + ".png",
+			href : data.replace("image/png", "image/octet-stream") // to download mime
+		});
+
+		canvas = null;
+	}
+
 	return {
 		save : save,
-		restore : restore
+		restore : restore,
+		exportJson : exportJson,
+		exportImage : exportImage
 	}
 
 }

@@ -448,22 +448,49 @@
 		<div class="modal hide" id="exportModal" tabindex="-1" aria-hidden="true">
 			<div class="modal-header">
 				<button class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h3><span>导出文件</span></h3>
+				<h3>导出文件</h3>
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal">
 		            <legend>文件</legend>
 		            <div class="control-group">
-		              <label class="control-label">名称：</label>
-		              <div>
-		                <input type="text" id="filename">
-		              </div>
+						<label class="control-label">名称：</label>
+						<div>
+							<input type="text" id="filename">
+						</div>
 		            </div>
 		        </form>
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
 				<a class="btn btn-primary" href="#" download="export.json" id="exportConfirm">确定</a>
+			</div>
+		</div>
+		<!-- 另存图片对话框 -->
+		<div class="modal hide" id="saveAsModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3>另存图片</h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+		            <legend>图片</legend>
+		            <div class="control-group">
+						<label class="control-label">名称：</label>
+						<div class="input-append">
+							<input type="text" id="imageName" value="unnamed"><span class="add-on">PNG</span>
+						</div>
+		            </div>
+		            <div class="control-group">
+						<div class="alert alert-info" style="margin-bottom : 0px">
+							<strong>说明：</strong>图片内容由当前可见图块层整合而成。
+						</div>
+		            </div>
+		        </form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<a class="btn btn-primary" href="#" download="export.png" id="saveAsConfirm">另存图片</a>
 			</div>
 		</div>
 		<!-- 文件调整对话框 -->

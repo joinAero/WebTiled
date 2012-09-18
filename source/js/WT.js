@@ -151,7 +151,7 @@ $(document).ready(function() {
 				alert('保存');
 				break;
 			case 'saveAs' : // 另存图片
-				alert('另存图片');
+				showSaveAsDialog(e);
 				break;
 		}
 	});
@@ -343,6 +343,15 @@ $(document).ready(function() {
 		}
 	}
 
+	function showSaveAsDialog(e) {
+		if (mapModule.isMapReady()) {
+			$('#saveAsModal').modal('show');
+		} else {
+			showDialog(null, '另存图片', '请先新建或导入文件！');
+			e.preventDefault();
+		}
+	}
+
 	$('#dialogGroup').click(function(e) {
 		var tileIndex = tileModule.currentTileIndex();
 		switch(e.target.id) {
@@ -426,6 +435,14 @@ $(document).ready(function() {
 					console.log(ex);
 					e.preventDefault();
 				}
+				break;
+			case 'saveAsConfirm' :
+				var imgName = $('#imageName').val();
+				if (imgName === '') {
+					imgName = 'unnamed';
+				}
+				$('#saveAsModal').modal('hide');
+				storeModule.exportImage(imgName);
 				break;
 			case 'adjMapConfirm' :
 				var width = $('#newWidth').val() * 1;
