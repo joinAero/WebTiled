@@ -52,11 +52,14 @@ WT.Tile.prototype = {
 	},
 
 	clipImageData : function(left, top) {
-		var p = this._piece;
-		if (p !== null && p.left === left && p.top === top) {
-			return this._piece.data;
-		}
-		return this._ctx.getImageData(left, top, this.tilewidth, this.tileheight);
+		var canvas = document.createElement('canvas');
+		canvas.width = this.tilewidth;
+		canvas.height = this.tileheight;
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(this.image, left, top, this.tilewidth, this.tileheight, 0, 0, this.tilewidth, this.tileheight);
+		var data = ctx.getImageData(0, 0, this.tilewidth, this.tileheight);
+		canvas = null;
+		return data;
 	}
 
 }

@@ -463,7 +463,45 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-				<a class="btn btn-primary" href="#" download="export.json" id="exportConfirm">确定</a>
+				<a class="btn btn-primary" href="#" download="export.wt" id="exportConfirm">确定</a>
+			</div>
+		</div>
+		<!-- 保存对话框 -->
+		<div class="modal hide" id="saveModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3>保存</h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+		            <legend>文件</legend>
+		            <div class="control-group">
+						<label class="control-label">名称：</label>
+						<div class="input-append">
+							<input type="text" id="jsonName" value="unnamed"><span class="add-on">JSON</span>
+						</div>
+		            </div>
+		            <legend>选项</legend>
+		            <div class="control-group">
+						<label class="control-label"></label>
+						<label class="checkbox">
+							<input type="checkbox" id="hasTiles" checked><span style="margin-left:10px">地图图块信息<span>
+						</label>
+						<label class="control-label"></label>
+						<label class="checkbox">
+							<input type="checkbox" id="hasLayers" checked><span style="margin-left:10px">地图图层信息<span>
+						</label>
+		            </div>
+		            <div class="control-group">
+						<div class="alert alert-info" style="margin-bottom : 0px">
+							<strong>说明：</strong>数据以Json形式保存。
+						</div>
+		            </div>
+		        </form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<a class="btn btn-primary" href="#" download="export.json" id="saveConfirm">保存</a>
 			</div>
 		</div>
 		<!-- 另存图片对话框 -->

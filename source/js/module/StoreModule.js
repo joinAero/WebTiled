@@ -46,8 +46,97 @@ WT.StoreModule = function() {
 		reader.readAsText(file);
 	}
 
-	function exportJson() {
+	function exportJson(jsonName, hasTiles, hasLayers) {
+		var obj = {};
+		if (hasTiles) {
+			var tiles = [];
 
+			var tile, i = -1;
+			var oldTiles = WT.file.tilesets;
+			while (tile = oldTiles[++i]) {
+				tiles.push({
+					id : tile.id,
+					name : tile.name,
+					tilewidth : tile.tilewidth,
+					tileheight : tile.tileheight,
+					imagewidth : tile.imagewidth,
+					imageheight : tile.imageheight,
+					imagesrc : tile.image.src
+				});
+			}
+			obj.tiles = tiles;
+		}
+		if (hasLayers) {
+			var layers = [];
+
+			var layer, j = -1;
+			var oldLayers = WT.file.layers;
+			while (layer = oldLayers[++j]) {
+				layers.push(beNewLayer(layer));
+			}
+			obj.layers = layers;
+
+			obj.width = WT.file.width;
+			obj.height = WT.file.height;
+			obj.tilewidth = WT.file.tilewidth;
+			obj.tileheight = WT.file.tileheight;
+		}
+
+		var json = JSON.stringify(obj, null, 0);
+		var blob = new Blob([json]);
+			window.URL = window.webkitURL || window.URL;
+		$('#saveConfirm').attr({
+			download : jsonName + '.json',
+			href : window.URL.createObjectURL(blob)
+		});
+	}
+
+	function beNewLayer(layer) {
+		var newlayer = {
+			// zIndex即是索引顺序
+			name : layer.name,
+			type : layer.type
+		};
+		if (layer.type === WT.TILE_LAYER) {
+			var tiles = []; // 存放小块信息
+			var map = []; // 上述小块索引的地图
+			for (var i = 0; i < WT.file.height; i++) {
+				map.push([]);
+			}
+			var op, m = -1;
+			while (op = layer.operations[++m]) {
+				var index = pushTile(tiles, op[0], op[1], op[2]);
+
+				var cover = op[3];
+				var len = cover.length;
+				for (var n = 0; n < len; n += 2) {
+					var column = Math.floor(cover[n] / WT.file.tilewidth);
+					var row = Math.floor(cover[n + 1] / WT.file.tileheight);
+					map[row][column] = index;
+				}
+			}
+			newlayer.tiles = tiles;
+			newlayer.map = map;
+		} else { // WT.RECT_LAYER
+			var rects = [];
+			var rect, k = -1;
+			while (rect = layer.rects[++k]) {
+				rects.push([rect.left, rect.top, rect.width, rect.height]);
+			}
+			newlayer.rects = rects;
+		}
+		return newlayer;
+	}
+
+	function pushTile(tiles, tileId, tileLeft, tileTop) {
+		var tile, i = -1;
+		while(tile = tiles[++i]) {
+			if (tile[0] == tileId && tile[1] == tileLeft && tile[2] == tileTop) {
+				return i;
+			}
+		}
+		tiles.push([tileId, tileLeft, tileTop]);
+		return i;
 	}
 
 	function exportImage(imgName) {
@@ -79,8 +168,8 @@ WT.StoreModule = function() {
 		// var blob = new Blob([data], {type : "image/png"});
 		// window.URL = window.webkitURL || window.URL;
 		$('#saveAsConfirm').attr({
-			download : imgName + ".png",
-			href : data.replace("image/png", "image/octet-stream") // to download mime
+			download : imgName + '.png',
+			href : data.replace('image/png', 'image/octet-stream') // to download mime
 		});
 
 		canvas = null;

@@ -148,10 +148,10 @@ $(document).ready(function() {
 				showExportDialog();
 				break;
 			case 'save' : // 保存
-				alert('保存');
+				showSaveDialog();
 				break;
 			case 'saveAs' : // 另存图片
-				showSaveAsDialog(e);
+				showSaveAsDialog();
 				break;
 		}
 	});
@@ -343,12 +343,19 @@ $(document).ready(function() {
 		}
 	}
 
-	function showSaveAsDialog(e) {
+	function showSaveAsDialog() {
 		if (mapModule.isMapReady()) {
 			$('#saveAsModal').modal('show');
 		} else {
 			showDialog(null, '另存图片', '请先新建或导入文件！');
-			e.preventDefault();
+		}
+	}
+
+	function showSaveDialog() {
+		if (mapModule.isMapReady()) {
+			$('#saveModal').modal('show');
+		} else {
+			showDialog(null, '保存', '请先新建或导入文件！');
 		}
 	}
 
@@ -435,6 +442,16 @@ $(document).ready(function() {
 					console.log(ex);
 					e.preventDefault();
 				}
+				break;
+			case 'saveConfirm' :
+				var jsonName = $('#jsonName').val();
+				if (jsonName === '') {
+					jsonName = 'unnamed';
+				}
+				var hasTiles = $('#hasTiles').attr('checked');
+				var hasLayers = $('#hasLayers').attr('checked');
+				$('#saveModal').modal('hide');
+				storeModule.exportJson(jsonName, hasTiles, hasLayers);
 				break;
 			case 'saveAsConfirm' :
 				var imgName = $('#imageName').val();
