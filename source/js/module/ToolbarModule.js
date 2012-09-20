@@ -35,26 +35,32 @@ WT.ToolbarModule = function(toggleMesh, toggleState) {
 	var toolBtns = [];
 	var isVertical = true;
 
-	function initToolBtns(vertical) {
-		isVertical = vertical;
-
-		$toolGroup.empty();
-		toolBtns = [];
-
+	// 避免节点重新加载
+	(function () {
 		var tool, i = -1;
 		while(tool = tools[++i]) {
 			var btn = document.createElement('button');
 			btn.id = tool.id;
 			btn.title = tool.tip;
 			btn.style.backgroundImage = 'url("./img/' + tool.id + '.png")';
-			$toolGroup.append(btn);
-			if (vertical) {
-				$toolGroup.append('<br/>');
-			}
 			toolBtns.push(btn);
 		}
 		toolBtns[0].style.cursor = 'move';
 		toolBtns[index].style.backgroundColor = 'skyBlue';
+	})();
+
+	function initToolBtns(vertical) {
+		isVertical = vertical;
+
+		$toolGroup.empty();
+
+		var btn, i = -1;
+		while(btn = toolBtns[++i]) {
+			$toolGroup.append(btn);
+			if (vertical) {
+				$toolGroup.append('<br/>');
+			}
+		}
 	};
 
 	(function() {
