@@ -30,3 +30,8 @@ HTML5 Canvas实现的网页版地图编辑器。
 * [jQuery](http://jquery.com/)
 * [Bootstrap](http://twitter.github.com/bootstrap/)
 * [工具栏图标](http://www.defaulticon.com/)
+
+预览
+----
+
+[Click here!](http://join-wt.jit.su/)
