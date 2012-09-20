@@ -13,6 +13,7 @@ WT.MapModule = function(currentPiece, toggleLayer) {
 		$mapCanvasDiv.empty();
 		$layerContainer.empty();
 		WT.file.layers = [];
+		mLayer = null;
 		index = 0;
 
 		createMeshCanvas();
