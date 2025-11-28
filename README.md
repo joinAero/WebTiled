@@ -6,6 +6,8 @@ Web地图编辑器
 
 HTML5 Canvas实现的网页版地图编辑器。
 
+![](demos/demo.png)
+
 基本功能
 --------
 
